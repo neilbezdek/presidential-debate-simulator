@@ -89,24 +89,19 @@ def append_to_df(df):
     '''
     pass
 
-def combine_tables(filenames)
+def combine_tables(filenames):
     df = pd.DataFrame(columns = ['speaker', 'content', 'year','debate_num'])
     for f in filenames:
-        t = read_file(f)
+        print f
+        t = read_file(''.join(['transcripts/',f]))
         df_new = build_one_table(t)
         df_new = clean_table_content(df_new)
         df_new = merge_lines(df_new)
         add_year_and_number(f, df_new)
-        df.append(df_new)
-
+        df = df.append(df_new)
+    return df
 
 if __name__ == '__main__':
 
-    # filenames = os.listdir("transcripts")
-
-    testfile = 'transcripts/1992_bclinton_ghbush_perot_3.txt'
-    t = read_file(testfile)
-    df = build_one_table(t)
-    df = clean_table_content(df)
-    df = merge_lines(df)
-    add_year_and_number(testfile, df)
+    filenames = os.listdir("transcripts")
+    df = combine_tables(filenames)
