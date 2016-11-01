@@ -101,7 +101,30 @@ def combine_tables(filenames):
         df = df.append(df_new)
     return df
 
+def read_and_clean_csv(filename):
+    df = pd.read_csv(filename)
+    df['content']=df['Text'].apply(lambda x: remove_line_parens_and_blanks(x))
+    del df['Text']
+    mask = df['content'] != ''
+    df = df[mask]
+    df['year'] = 2016
+    df['debate_num'] = df['Date'].apply(lambda x: replace_dates(x))
+    vp_mask = df['debate_num'] != 0
+    df = df[vp_mask]
+    del df['Line']
+    del df['Date']
+    df.columns = ['speaker','content','year','debate_num']
+    return df
+
+def replace_dates(debate_date):
+    schedule = {'9/26/16':1, '10/9/16':2, '10/19/2016':3, '10/4/16':0}
+    if debate_date in schedule.keys():
+        return schedule[debate_date]
+    else:
+        return 0
+
 if __name__ == '__main__':
 
-    filenames = os.listdir("transcripts")
+    filenames = os.listdir('transcripts')
     df = combine_tables(filenames)
+    df = df.append(read_and_clean_csv('2016_rclinton_trump_all.csv'))
