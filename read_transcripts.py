@@ -1,16 +1,8 @@
-'''
-Tasks:
-- replace ambiguous bush/clinton names
-- replace ambiguous titles like president
-- create list of all moderators
-- remove commentary with round or square brackets
-- correct for starts like "MR"
-'''
-
 import numpy as np
 import pandas as pd
 import os
 import re
+import matplotlib.pyplot as plt
 
 def read_file(filename):
     with open(filename, 'r') as transcript:
@@ -55,15 +47,15 @@ def clean_table_content(df):
     mask = df['content'] != ''
     return df[mask]
 
-def merge_lines(df):
-    lines = df.shape[0]
-    for r in range(lines-1):
-        counter = 1
-        while df.iloc[r+counter,0] == '' and r+counter < lines-1:
-            df.iloc[r,1] = ' '.join([df.iloc[r,1],df.iloc[r+counter,1]])
-            counter += 1
-    mask = df['speaker'] != ''
-    return df[mask]
+# def merge_lines(df):
+#     lines = df.shape[0]
+#     for r in range(lines-1):
+#         counter = 1
+#         while df.iloc[r+counter,0] == '' and r+counter < lines-1:
+#             df.iloc[r,1] = ' '.join([df.iloc[r,1],df.iloc[r+counter,1]])
+#             counter += 1
+#     mask = df['speaker'] != ''
+#     return df[mask]
 
 def add_year_and_number(filename, df):
     if '.' in filename:
@@ -73,23 +65,6 @@ def add_year_and_number(filename, df):
     parts = filename.split('_')
     df['year'] = int(parts[0])
     df['debate_num'] = parts[-1]
-
-def replace_ambiguous_names(text):
-    '''
-    INPUT: List of text lines from transcripts
-    ACTION: Replaces ambiguous speak names like "Bush" with "G.W. Bush"
-    OUTPUT: None
-    '''
-    pass
-
-def find_speaker_names(text):
-    pass
-
-def append_to_df(df):
-    '''
-    Columns: Year, Debate #, Winner/Loser, Party, is_incumbent, Speaker (candidate name or moderator), text,
-    '''
-    pass
 
 def combine_tables(filenames):
     df = pd.DataFrame(columns = ['speaker', 'content', 'year','debate_num'])
@@ -118,18 +93,18 @@ def read_and_clean_csv(filename):
     df.columns = ['speaker','content','year','debate_num']
     return df
 
-def merge_lines_csv(df):
-    lines = df.shape[0]
-    for r in range(lines-1):
-        counter = 1
-        while df.iloc[r+counter,0] == df.iloc[r,0] and r+counter < lines-1:
-            df.iloc[r,1] = ' '.join([df.iloc[r,1],df.iloc[r+counter,1]])
-            counter += 1
+def merge_lines(df):
+    df.reset_index(drop=True, inplace = True)
     df['remove'] = 0
-    for i in range(lines-1):
-        if df.iloc[i,0] == df.iloc[i+1,0]:
-            df.ix[i+1,'remove'] = 1
+    lines = df.shape[0]
+    for idx in range(1,lines):
+        if df.ix[idx-1,'speaker'] == df.ix[idx,'speaker'] or df.ix[idx,'speaker'] == '':
+            df.ix[idx,'content'] = ' '.join([df.ix[idx-1,'content'],df.ix[idx,'content']])
+            df.ix[idx-1,'remove'] = 1
+        if df.ix[idx,'speaker'] == '':
+            df.ix[idx,'speaker'] = df.ix[idx-1,'speaker']
     mask = df['remove'] == 0
+    del df['remove']
     return df[mask]
 
 def replace_dates(debate_date):
@@ -150,10 +125,10 @@ def clean_one_name(line):
     line = regex.sub('', line)
     line = line.rstrip()
     line = line.upper()
-    line = line.replace('MR. ','')
-    line = line.replace('MS. ','')
-    line = line.replace('MR. ','')
-    line = line.replace('MS. ','')
+    # line = line.replace('MR. ','')
+    # line = line.replace('MS. ','')
+    # line = line.replace('MR. ','')
+    # line = line.replace('MS. ','')
     return line
 
 def correct_ambiguous_name(line):
@@ -181,7 +156,7 @@ if __name__ == '__main__':
 
     filenames = os.listdir('transcripts')
     df = combine_tables(filenames)
-    df = df.append(read_and_clean_csv('2016_rclinton_trump_all.csv'), ignore_index = True)
+    df = df.append(merge_lines(read_and_clean_csv('2016_rclinton_trump_all.csv')), ignore_index = True)
     df = clean_speaker_names(df)
 
     cand_df = pd.read_csv('candidates.csv')
@@ -189,7 +164,23 @@ if __name__ == '__main__':
 
     df = standardize_speaker_names(df, cand_list)
     df = pd.merge(df, cand_df, how = 'left', on = ['year','speaker'])
-
     df['len'] = df['content'].apply(lambda x: len(x.split(' ')))
+    del df['speaker']
+    df=df.rename(columns = {'alias':'speaker'})
 
-    df[(df['party'] == 'Republican') | (df['party']=='Democrat')].groupby(['party','year'])['len'].median()
+
+    # Visualization
+
+    fig = plt.figure(figsize = (12,9))
+    fig.add_subplot(1,1,1)
+    rep_len = df[df['party']=='Republican'].groupby(['year'])['len'].mean().values
+    dem_len = df[df['party']=='Democrat'].groupby(['year'])['len'].mean().values
+    x = df[df['party']=='Democrat'].groupby(['year'])['len'].mean().index
+
+    plt.plot(x, rep_len, 'ro-', label = 'Republican')
+    plt.plot(x, dem_len, 'b^-', label = 'Democrat')
+    plt.title('Presdential Debates: Mean Number of Words Per Response Before Stopping or Interruption')
+    plt.xlabel('Debate Year')
+    plt.ylabel('Mean Number of Words')
+    plt.legend()
+    plt.tight_layout()
