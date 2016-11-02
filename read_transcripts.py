@@ -171,16 +171,16 @@ if __name__ == '__main__':
 
     # Visualization
 
-    fig = plt.figure(figsize = (12,9))
-    fig.add_subplot(1,1,1)
-    rep_len = df[df['party']=='Republican'].groupby(['year'])['len'].mean().values
-    dem_len = df[df['party']=='Democrat'].groupby(['year'])['len'].mean().values
-    x = df[df['party']=='Democrat'].groupby(['year'])['len'].mean().index
-
-    plt.plot(x, rep_len, 'ro-', label = 'Republican')
-    plt.plot(x, dem_len, 'b^-', label = 'Democrat')
-    plt.title('Presdential Debates: Mean Number of Words Per Response Before Stopping or Interruption')
-    plt.xlabel('Debate Year')
-    plt.ylabel('Mean Number of Words')
-    plt.legend()
-    plt.tight_layout()
+    # fig = plt.figure(figsize = (12,9))
+    # fig.add_subplot(1,1,1)
+    # rep_len = df[df['party']=='Republican'].groupby(['year'])['len'].mean().values
+    # dem_len = df[df['party']=='Democrat'].groupby(['year'])['len'].mean().values
+    # x = df[df['party']=='Democrat'].groupby(['year'])['len'].mean().index
+    #
+    # plt.plot(x, rep_len, 'ro-', label = 'Republican')
+    # plt.plot(x, dem_len, 'b^-', label = 'Democrat')
+    # plt.title('Presdential Debates: Mean Number of Words Per Response Before Stopping or Interruption')
+    # plt.xlabel('Debate Year')
+    # plt.ylabel('Mean Number of Words')
+    # plt.legend()
+    # plt.tight_layout()
