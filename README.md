@@ -1,4 +1,4 @@
-# presidential-debate-time-machine
+# Presidential Debate Time Machine
 
 Have you ever wondered what a presidential debate between JFK and Donald Trump would look like? Or how Bill and Hillary Clinton might bicker on stage?
 
@@ -6,4 +6,4 @@ Welcome to the Presidential Debate Time Machine, where I use machine learning an
 
 This project is currently underway but will be complete by Nov 17, 2016. Stay tuned for updates!
 
-![](images/america_in_decline.png?raw=true)
+![figure1](images/america_in_decline.jpeg)
