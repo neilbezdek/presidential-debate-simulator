@@ -6,4 +6,5 @@ Welcome to the Presidential Debate Time Machine, where I use machine learning an
 
 This project is currently underway but will be complete by Nov 17, 2016. Stay tuned for updates!
 
+
 ![figure1](images/america_in_decline.jpeg)
