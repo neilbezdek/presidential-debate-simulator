@@ -1,0 +1,3 @@
+*.pyc
+*.pkl
+names_to_change.txt
