@@ -7,12 +7,16 @@ from keras.utils.data_utils import get_file
 import numpy as np
 import random
 import sys
+import cPickle as pickle
 
-from read_transcripts import read_transcripts_into_df
-# path = get_file('nietzsche.txt', origin="https://s3.amazonaws.com/text-datasets/nietzsche.txt")
-# text = open(path).read().lower()
+# Use imported function to read transcripts and build df
+# from read_transcripts import read_transcripts_into_df
+# df = read_transcripts_into_df()
 
-df = read_transcripts_into_df()
+# Instead, open pickeled model to save time:
+with open('transcripts_df.pkl') as f:
+    df = pickle.load(f)
+
 text = ''.join(df[df['speaker']=='OBAMA']['content'].values)
 text = text.split(' ')
 print('corpus length:', len(text))
