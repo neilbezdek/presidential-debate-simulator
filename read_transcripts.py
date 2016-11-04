@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import re
 import matplotlib.pyplot as plt
+plt.style.use('ggplot')
 
 def read_file(filename):
     with open(filename, 'r') as transcript:
@@ -152,8 +153,7 @@ def standardize_one_name(line, cand_list):
     else:
         return 'MODERATOR'
 
-if __name__ == '__main__':
-
+def read_transcripts_into_df():
     filenames = os.listdir('transcripts')
     df = combine_tables(filenames)
     df = df.append(merge_lines(read_and_clean_csv('2016_rclinton_trump_all.csv')), ignore_index = True)
@@ -167,20 +167,38 @@ if __name__ == '__main__':
     df['len'] = df['content'].apply(lambda x: len(x.split(' ')))
     del df['speaker']
     df=df.rename(columns = {'alias':'speaker'})
+    return df
+
+if __name__ == '__main__':
+
+    df = read_transcripts_into_df()
+
+    # filenames = os.listdir('transcripts')
+    # df = combine_tables(filenames)
+    # df = df.append(merge_lines(read_and_clean_csv('2016_rclinton_trump_all.csv')), ignore_index = True)
+    # df = clean_speaker_names(df)
+    #
+    # cand_df = pd.read_csv('candidates.csv')
+    # cand_list = list(set(cand_df['speaker'].tolist()))
+    #
+    # df = standardize_speaker_names(df, cand_list)
+    # df = pd.merge(df, cand_df, how = 'left', on = ['year','speaker'])
+    # df['len'] = df['content'].apply(lambda x: len(x.split(' ')))
+    # del df['speaker']
+    # df=df.rename(columns = {'alias':'speaker'})
 
 
     # Visualization
 
-    # fig = plt.figure(figsize = (12,9))
-    # fig.add_subplot(1,1,1)
-    # rep_len = df[df['party']=='Republican'].groupby(['year'])['len'].mean().values
-    # dem_len = df[df['party']=='Democrat'].groupby(['year'])['len'].mean().values
-    # x = df[df['party']=='Democrat'].groupby(['year'])['len'].mean().index
-    #
-    # plt.plot(x, rep_len, 'ro-', label = 'Republican')
-    # plt.plot(x, dem_len, 'b^-', label = 'Democrat')
-    # plt.title('Presdential Debates: Mean Number of Words Per Response Before Stopping or Interruption')
-    # plt.xlabel('Debate Year')
-    # plt.ylabel('Mean Number of Words')
-    # plt.legend()
-    # plt.tight_layout()
+    fig = plt.figure(figsize = (12,9))
+    fig.add_subplot(1,1,1)
+    rep_len = df[df['party']=='Republican'].groupby(['year'])['len'].mean().values
+    dem_len = df[df['party']=='Democrat'].groupby(['year'])['len'].mean().values
+    x = df[df['party']=='Democrat'].groupby(['year'])['len'].mean().index
+
+    plt.plot(x, rep_len, 'ro-', label = 'Republican')
+    plt.plot(x, dem_len, 'b^-', label = 'Democrat')
+    plt.title('Presdential Debates: Mean Number of Words Per Response Before Stopping or Interruption')
+    plt.xlabel('Debate Year')
+    plt.ylabel('Mean Number of Words')
+    plt.legend()
