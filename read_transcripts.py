@@ -4,6 +4,7 @@ import os
 import re
 import matplotlib.pyplot as plt
 import cPickle as pickle
+from lemmatizer import lemmatizer
 plt.style.use('ggplot')
 
 def read_file(filename):
@@ -168,6 +169,14 @@ def standardize_one_name(line, cand_list):
     else:
         return 'MODERATOR'
 
+def add_question(df):
+    for line in range(1,df.shape[0]):
+        df.ix[line,'simple_question']=df.ix[line-1,'simple_content']
+        df.ix[line,'question']=df.ix[line-1,'content']
+    df.ix[0,'simple_question'] = ''
+    df.ix[0,'question'] = ''
+    return df
+
 def read_transcripts_into_df():
     filenames = os.listdir('transcripts')
     df = combine_tables(filenames)
@@ -182,17 +191,16 @@ def read_transcripts_into_df():
     df['len'] = df['content'].apply(lambda x: len(x.split(' ')))
     del df['speaker']
     df=df.rename(columns = {'alias':'speaker'})
+    df['simple_content'] = df['content'].apply(lemmatizer)
+    df = add_question(df)
     return df
 
 if __name__ == '__main__':
 
     df = read_transcripts_into_df()
 
-
     with open("transcripts_df.pkl", 'w') as f:
         pickle.dump(df, f)
-
-
 
     # filenames = os.listdir('transcripts')
     # df = combine_tables(filenames)

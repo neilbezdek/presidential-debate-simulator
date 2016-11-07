@@ -9,11 +9,6 @@ import random
 import sys
 import cPickle as pickle
 
-# Use imported function to read transcripts and build df
-# from read_transcripts import read_transcripts_into_df
-# df = read_transcripts_into_df()
-
-# Instead, open pickeled model to save time:
 with open('transcripts_df.pkl') as f:
     df = pickle.load(f)
 

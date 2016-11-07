@@ -6,6 +6,7 @@ from numpy.random import rand, RandomState
 from numpy import array, matrix, linalg
 import cPickle as pickle
 import csv
+from progressbar import ProgressBar
 
 
 def reconst_mse(target, left, right):
@@ -38,7 +39,7 @@ if __name__ == "__main__":
     with open('transcripts_df.pkl') as f:
         df = pickle.load(f)
 
-    docs = df[(df['speaker'] != 'MODERATOR') & (df['len'] > 75)]['content']
+    docs = df[(df['speaker'] != 'MODERATOR') & (df['len'] > 75)]['simple_content']
     my_stop_words = build_stop_words()
 
     vectorizer = TfidfVectorizer(max_df = .7, stop_words=my_stop_words, analyzer = 'word',ngram_range = (1,2))
