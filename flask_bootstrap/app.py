@@ -10,7 +10,25 @@ def index():
         return render_template('index.html', question = None)
     else:
         answer = answer_questions(question)
-        return render_template('index.html', question = question, obama = ''.join([answer['OBAMA'][:200],'...']), trump = ''.join([answer['TRUMP'][:200],'...']), hrclinton = ''.join([answer['H. R. CLINTON'][:200],'...']), bclinton = ''.join([answer['B. CLINTON'][:200],'...']), kennedy = ''.join([answer['KENNEDY'][:200],'...']), reagan = ''.join([answer['REAGAN'][:200],'...']))
+
+
+
+
+        return render_template(
+            'index.html',
+            question = question,
+            obama = ''.join([answer['OBAMA'][:200],'...']) if len(answer['OBAMA']) >= 200 else answer['OBAMA'],
+            trump = ''.join([answer['TRUMP'][:200],'...']) if len(answer['TRUMP']) >= 200 else answer['TRUMP'],
+            hrclinton = ''.join([answer['H. R. CLINTON'][:200],'...']) if len(answer['H. R. CLINTON']) >= 200 else answer['H. R. CLINTON'],
+            bclinton = ''.join([answer['B. CLINTON'][:200],'...']) if len(answer['B. CLINTON']) >= 200 else answer['B. CLINTON'],
+            kennedy = ''.join([answer['KENNEDY'][:200],'...']) if len(answer['KENNEDY']) >= 200 else answer['KENNEDY'],
+            reagan = ''.join([answer['REAGAN'][:200],'...']) if len(answer['REAGAN']) >= 200 else answer['REAGAN'], 
+            obama_full = answer['OBAMA'],
+            trump_full = answer['TRUMP'],
+            hrclinton_full = answer['H. R. CLINTON'],
+            bclinton_full = answer['B. CLINTON'],
+            kennedy_full = answer['KENNEDY'],
+            reagan_full = answer['REAGAN'])
 
 # @app.route('/more/')
 # def more():
