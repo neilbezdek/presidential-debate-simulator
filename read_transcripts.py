@@ -1,3 +1,5 @@
+# Run this file to read all transcripts, combine into one dataframe, and pickle the result.
+
 import numpy as np
 import pandas as pd
 import os
@@ -8,23 +10,27 @@ from lemmatizer import lemmatizer
 plt.style.use('ggplot')
 
 def read_file(filename):
+    '''
+    Reads a .txt file and returns of a list of each line of text with non-ASCII characters removed.
+    '''
     with open(filename, 'r') as transcript:
         text = transcript.readlines()
     for idx, line in enumerate(text):
         text[idx] = remove_non_ascii(line)
     return text
 
-# def decode_lines(line):
-#     if isinstance(line, unicode):
-#         return unidecode(line)
-#     else:
-#         return str(line)
-
 def remove_non_ascii(line):
+    '''
+    INPUT: String
+    OUTPUT: String with non-ASCII characters removed
+    '''
     return ''.join(c for c in line if ord(c)<128)
 
-
 def remove_line_parens_and_blanks(line):
+    '''
+    INPUT: String
+    OUTPUT: String with items in parentheses or square brackets (e.g. [APPLAUSE]) removed. Also returns a blank string if None to deal with NaN values.
+    '''
     if line == None:
         return ''
     regex = re.compile('\(.+?\)')
@@ -35,6 +41,9 @@ def remove_line_parens_and_blanks(line):
     return line
 
 def split_speaker_from_content(line,part):
+    '''
+    Function to seperate speaker names and rest of text from an individual line of text(e.g. "CLINTON: I think we should ..."). If part == 0, function returns speaker name. If part == 1, function returns remained of text.
+    '''
     parts = line.split(':',1)
     if len(parts) > 1:
         pct_upper = sum(1 for c in parts[0] if c.isupper())/float(len(parts[0]))
@@ -50,6 +59,9 @@ def split_speaker_from_content(line,part):
             return ''
 
 def build_one_table(text):
+    '''
+    Function takes a list of strings (lines of text from one transcript) and returns a pandas dataframe with columns for the speaker and content.
+    '''
     df = pd.DataFrame(text)
     df.columns = ['content']
     df['speaker'] = df['content'].apply(lambda x: split_speaker_from_content(x,0))
@@ -58,21 +70,17 @@ def build_one_table(text):
     return df
 
 def clean_table_content(df):
+    '''
+    Applies function to remove parentheses from each line of pandas dataframe. Returns a datafame with blank lines removed.
+    '''
     df['content'] = df['content'].apply(lambda x: remove_line_parens_and_blanks(x))
     mask = df['content'] != ''
     return df[mask]
 
-# def merge_lines(df):
-#     lines = df.shape[0]
-#     for r in range(lines-1):
-#         counter = 1
-#         while df.iloc[r+counter,0] == '' and r+counter < lines-1:
-#             df.iloc[r,1] = ' '.join([df.iloc[r,1],df.iloc[r+counter,1]])
-#             counter += 1
-#     mask = df['speaker'] != ''
-#     return df[mask]
-
 def add_year_and_number(filename, df):
+    '''
+    Add columns for year and debate number to dataframe based on content of filename.
+    '''
     if '.' in filename:
         filename = filename.split('.',1)[0]
     while '/' in filename:
@@ -82,6 +90,9 @@ def add_year_and_number(filename, df):
     df['debate_num'] = parts[-1]
 
 def combine_tables(filenames):
+    '''
+    Iterates through each .txt transcript and combines them into one dataframe.
+    '''
     df = pd.DataFrame(columns = ['speaker', 'content', 'year','debate_num'])
     for f in filenames:
         print f
@@ -94,6 +105,9 @@ def combine_tables(filenames):
     return df
 
 def read_and_clean_csv(filename):
+    '''
+    Function to read and clean the one transcript that is in .csv format (2016).
+    '''
     df = pd.read_csv(filename)
     df['content']=df['Text'].apply(lambda x: remove_line_parens_and_blanks(x))
     del df['Text']
@@ -110,7 +124,20 @@ def read_and_clean_csv(filename):
     df['content'] = df['content'].apply(lambda x: remove_non_ascii(x))
     return df
 
+def replace_dates(debate_date):
+    schedule = {'9/26/16':1,
+                '10/9/16':2,
+                '10/19/2016':3,
+                '10/4/16':0}
+    if debate_date in schedule.keys():
+        return schedule[debate_date]
+    else:
+        return 0
+
 def merge_lines(df):
+    '''
+    Combine consecutive lines of speech by a single speaker into one line (one row in the dataframe).
+    '''
     df.reset_index(drop=True, inplace = True)
     df['remove'] = 0
     lines = df.shape[0]
@@ -124,31 +151,29 @@ def merge_lines(df):
     del df['remove']
     return df[mask]
 
-def replace_dates(debate_date):
-    schedule = {'9/26/16':1, '10/9/16':2, '10/19/2016':3, '10/4/16':0}
-    if debate_date in schedule.keys():
-        return schedule[debate_date]
-    else:
-        return 0
-
 def clean_speaker_names(df):
+    '''
+    Apply functions to clean and clarify speaker names to each line in the dataframe.
+    '''
     df['speaker'] = df['speaker'].apply(lambda x: correct_ambiguous_name(clean_one_name(x)))
     return df
 
 def clean_one_name(line):
+    '''
+    Remove items in parenetheses or square brackers from speaker names. Return in all capital letters.
+    '''
     regex = re.compile('\(.+?\)')
     line = regex.sub('', line)
     regex = re.compile('\[.+?\]')
     line = regex.sub('', line)
     line = line.rstrip()
     line = line.upper()
-    # line = line.replace('MR. ','')
-    # line = line.replace('MS. ','')
-    # line = line.replace('MR. ','')
-    # line = line.replace('MS. ','')
     return line
 
 def correct_ambiguous_name(line):
+    '''
+    Correct for mispelled or ambiguous speaker names.
+    '''
     if line == 'OBAM':
         line = 'OBAMA'
     if line == 'ROMNEHY':
@@ -157,12 +182,17 @@ def correct_ambiguous_name(line):
         line = 'REAGAN'
     return line
 
-
 def standardize_speaker_names(df, cand_list):
+    '''
+    Apply function to standardize each speaker's name to each line in the dataframe.
+    '''
     df['speaker'] = df['speaker'].apply(lambda x: standardize_one_name(x, cand_list))
     return df
 
 def standardize_one_name(line, cand_list):
+    '''
+    If speaker name is not a candidate, replace with 'MODERATOR'.
+    '''
     for name in cand_list:
         if name in line:
             return name
@@ -170,6 +200,9 @@ def standardize_one_name(line, cand_list):
         return 'MODERATOR'
 
 def add_question(df):
+    '''
+    Populate a new column that contains the content of previous questions/repsonses that the candidate is assumed to be responding to.
+    '''
     for line in range(1,df.shape[0]):
         df.ix[line,'simple_question']=df.ix[line-1,'simple_content']
         df.ix[line,'question']=df.ix[line-1,'content']
@@ -178,14 +211,15 @@ def add_question(df):
     return df
 
 def read_transcripts_into_df():
+    '''
+    Master function that calls on others to read text files (1960-2012) and csv (2016) into one data frame.
+    '''
     filenames = os.listdir('transcripts')
     df = combine_tables(filenames)
     df = df.append(merge_lines(read_and_clean_csv('2016_rclinton_trump_all.csv')), ignore_index = True)
     df = clean_speaker_names(df)
-
     cand_df = pd.read_csv('candidates.csv')
     cand_list = list(set(cand_df['speaker'].tolist()))
-
     df = standardize_speaker_names(df, cand_list)
     df = pd.merge(df, cand_df, how = 'left', on = ['year','speaker'])
     df['len'] = df['content'].apply(lambda x: len(x.split(' ')))
@@ -198,36 +232,5 @@ def read_transcripts_into_df():
 if __name__ == '__main__':
 
     df = read_transcripts_into_df()
-
     with open("transcripts_df.pkl", 'w') as f:
         pickle.dump(df, f)
-
-    # filenames = os.listdir('transcripts')
-    # df = combine_tables(filenames)
-    # df = df.append(merge_lines(read_and_clean_csv('2016_rclinton_trump_all.csv')), ignore_index = True)
-    # df = clean_speaker_names(df)
-    #
-    # cand_df = pd.read_csv('candidates.csv')
-    # cand_list = list(set(cand_df['speaker'].tolist()))
-    #
-    # df = standardize_speaker_names(df, cand_list)
-    # df = pd.merge(df, cand_df, how = 'left', on = ['year','speaker'])
-    # df['len'] = df['content'].apply(lambda x: len(x.split(' ')))
-    # del df['speaker']
-    # df=df.rename(columns = {'alias':'speaker'})
-
-
-    # Visualization
-
-    # fig = plt.figure(figsize = (12,9))
-    # fig.add_subplot(1,1,1)
-    # rep_len = df[df['party']=='Republican'].groupby(['year'])['len'].mean().values
-    # dem_len = df[df['party']=='Democrat'].groupby(['year'])['len'].mean().values
-    # x = df[df['party']=='Democrat'].groupby(['year'])['len'].mean().index
-    #
-    # plt.plot(x, rep_len, 'ro-', label = 'Republican')
-    # plt.plot(x, dem_len, 'b^-', label = 'Democrat')
-    # plt.title('Presdential Debates: Mean Response Length Per Question')
-    # plt.xlabel('Debate Year')
-    # plt.ylabel('Mean Number of Words Per Response Before Stopping or Interruption')
-    # plt.legend()
