@@ -3,3 +3,6 @@
 names_to_change.txt
 /bootstrap
 /app
+/nn_words.py
+/keras_example.py
+/neural_networks
