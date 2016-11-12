@@ -22,26 +22,16 @@ def find_questions_and_answers(df, candidate, question):
     tfidf = TfidfVectorizer(stop_words=build_stop_words()).fit_transform(corpus)
     cosine_similarities = linear_kernel(tfidf[0:1], tfidf).flatten()
     most_similar_question_idx = cosine_similarities.argsort()[-2]
-
-    # Print statements for assessing model
-    # print '\nSimlilar question index:'
-    # print most_similar_question_idx, '\n'
-    # print 'Original question:'
-    # print question, '\n'
-    # print 'Most similar question:'
-    # print df_new.ix[most_similar_question_idx,'question'], '\n'
-    # print 'Candidate answer:'
-    # print df_new.ix[most_similar_question_idx,'content'], '\n'
     return df_new.ix[most_similar_question_idx,'content']
 
-def answer_questions(question, candidates = ['KENNEDY','REAGAN','B. CLINTON', 'OBAMA', 'H. R. CLINTON','TRUMP']):
+def answer_questions(question):
     with open('transcripts_df.pkl') as f:
         df = pickle.load(f)
+    responses = {}
+    candidates = ['KENNEDY','REAGAN','B. CLINTON', 'OBAMA', 'H. R. CLINTON','TRUMP']
     for c in candidates:
-        print c
-        print find_questions_and_answers(df, c, question),'\n'
-    return None
+        responses[c] = find_questions_and_answers(df, c, question)
+    return responses
 
 if __name__ == '__main__':
-
     pass

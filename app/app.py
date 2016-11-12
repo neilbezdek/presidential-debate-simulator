@@ -9,8 +9,8 @@ def index():
     if not text:
         return render_template('index.html', text = None)
     else:
-        # answer = answer_questions(question)
-        return render_template('index.html', text = text, answer = answer_questions(text))
+        answer = answer_questions(text)
+        return render_template('index.html', text = text, obama = answer['OBAMA'], trump = answer['TRUMP'], hrclinton = answer['H. R. CLINTON'], bclinton = answer['B. CLINTON'], kennedy = answer['KENNEDY'], reagan = answer['REAGAN'])
 
 # @app.route('/answers', methods = ['POST','GET'])
 # def answer_questions():

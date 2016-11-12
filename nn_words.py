@@ -65,7 +65,7 @@ for iteration in range(1, 2):
     print()
     print('-' * 50)
     print('Iteration', iteration)
-    model.fit(X, y, batch_size=128, nb_epoch=20)
+    model.fit(X, y, batch_size=128, nb_epoch=2)
 
     start_index = random.randint(0, len(text) - maxlen - 1)
 
@@ -74,7 +74,9 @@ for iteration in range(1, 2):
         print('----- diversity:', diversity)
 
         generated = []
-        sentence = text[start_index: start_index + maxlen]
+        #sentence = text[start_index: start_index + maxlen]
+        sentence = "My plan for America"
+        sentence = sentence.split(' ')
         generated.extend(sentence)
         print('----- Generating with seed: "' + ' '.join(generated) + '"')
         sys.stdout.write(' '.join(generated))

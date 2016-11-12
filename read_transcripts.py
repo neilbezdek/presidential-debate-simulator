@@ -96,7 +96,7 @@ def combine_tables(filenames):
     df = pd.DataFrame(columns = ['speaker', 'content', 'year','debate_num'])
     for f in filenames:
         print f
-        t = read_file(''.join(['transcripts/',f]))
+        t = read_file(''.join(['transcripts/txt/',f]))
         df_new = build_one_table(t)
         df_new = clean_table_content(df_new)
         df_new = merge_lines(df_new)
@@ -214,9 +214,9 @@ def read_transcripts_into_df():
     '''
     Master function that calls on others to read text files (1960-2012) and csv (2016) into one data frame.
     '''
-    filenames = os.listdir('transcripts')
+    filenames = os.listdir('transcripts/txt/')
     df = combine_tables(filenames)
-    df = df.append(merge_lines(read_and_clean_csv('2016_rclinton_trump_all.csv')), ignore_index = True)
+    df = df.append(merge_lines(read_and_clean_csv('transcripts/csv/2016_rclinton_trump_all.csv')), ignore_index = True)
     df = clean_speaker_names(df)
     cand_df = pd.read_csv('candidates.csv')
     cand_list = list(set(cand_df['speaker'].tolist()))

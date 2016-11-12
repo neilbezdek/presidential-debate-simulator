@@ -10,10 +10,6 @@ def index():
         return render_template('index.html', question = None)
     else:
         answer = answer_questions(question)
-
-
-
-
         return render_template(
             'index.html',
             question = question,
@@ -22,7 +18,7 @@ def index():
             hrclinton = ''.join([answer['H. R. CLINTON'][:200],'...']) if len(answer['H. R. CLINTON']) >= 200 else answer['H. R. CLINTON'],
             bclinton = ''.join([answer['B. CLINTON'][:200],'...']) if len(answer['B. CLINTON']) >= 200 else answer['B. CLINTON'],
             kennedy = ''.join([answer['KENNEDY'][:200],'...']) if len(answer['KENNEDY']) >= 200 else answer['KENNEDY'],
-            reagan = ''.join([answer['REAGAN'][:200],'...']) if len(answer['REAGAN']) >= 200 else answer['REAGAN'], 
+            reagan = ''.join([answer['REAGAN'][:200],'...']) if len(answer['REAGAN']) >= 200 else answer['REAGAN'],
             obama_full = answer['OBAMA'],
             trump_full = answer['TRUMP'],
             hrclinton_full = answer['H. R. CLINTON'],

@@ -1,3 +1,5 @@
+# Each function in this file makes and saves one of the plots in the README file.
+
 import numpy as np
 import pandas as pd
 import os
@@ -9,6 +11,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 plt.style.use('ggplot')
 
 def make_average_words_plot(df):
+    '''
+    Makes and saves a plot of average words per response per election.
+    '''
     fig = plt.figure(figsize = (12,9))
     fig.add_subplot(1,1,1)
     rep_len = df[df['party']=='Republican'].groupby(['year'])['len'].mean().values
@@ -24,7 +29,9 @@ def make_average_words_plot(df):
     return None
 
 def make_vocabulary_size_plot(df):
-
+    '''
+    Makes and saves a plot of vocab size of each candidate per election. Based on first 2500 words spoken to account for candidates who speak more than others.
+    '''
     years = sorted(list(set(df['year'].values)))
     rep_vocab = []
     for year in years:
