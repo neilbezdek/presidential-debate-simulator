@@ -6,3 +6,4 @@ names_to_change.txt
 /nn_words.py
 /keras_example.py
 /neural_networks
+/images/logos
