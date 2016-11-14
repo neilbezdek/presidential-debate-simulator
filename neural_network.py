@@ -66,14 +66,14 @@ def sample(preds, temperature=1.0):
     probas = np.random.multinomial(1, preds, 1)
     return np.argmax(probas)
 
-def generate_response(seed,candidate,df):
+def generate_one_response(seed,candidate,df):
     '''
     INPUTS:
         seed: User question (str)
         candidate: Candidate name (str)
         df: dataframe of all debate transcripts (pandas dataframe)
     OUTPUT:
-        answer: Hypothetical answer to seed question (str) for display in web abb
+        answer: Hypothetical answer to seed question (str) for display in web app
     '''
     text = ''.join(df[df['speaker']==candidate]['content'].values)
     text = text.split(' ')
@@ -93,7 +93,10 @@ def generate_response(seed,candidate,df):
     y = np.zeros((len(sentences), len(words)), dtype=np.bool)
     for i, sentence in enumerate(sentences):
         for t, word in enumerate(sentence):
-            X[i, t, word_indices[word]] = 1
+            try:
+                X[i, t, word_indices[word]] = 1
+            except:
+                pass
         y[i, word_indices[next_words[i]]] = 1
 
     filename = 'neural_networks/{}_neural_network.pkl'.format(candidate)
@@ -101,31 +104,48 @@ def generate_response(seed,candidate,df):
         model = pickle.load(f)
 
     sentence = find_questions_and_answers(df, candidate, seed)
+    # sentence = sentence.strip("...")
     sentence = sentence.split(' ')
-    sentence = sentence[:5]
-    generated = []
-    generated.extend(sentence)
-    print('{} says: '.format(candidate))
-    print('----- Generating with seed: "' + ' '.join(generated) + '"')
-    sys.stdout.write(' '.join(generated))
-    sys.stdout.write(' ')
+    sentence = sentence[:5] if len(sentence) >= 5 else sentence
+    # generated = []
+    # generated.extend(sentence)
+    # # print('{} says: '.format(candidate))
+    # # print('----- Generating with seed: "' + ' '.join(generated) + '"')
+    # # sys.stdout.write(' '.join(generated))
+    # # sys.stdout.write(' ')
 
     for i in range(40):
         x = np.zeros((1, maxlen, len(words)))
         for t, word in enumerate(sentence):
-            x[0, t, word_indices[word]] = 1.
-
+            try:
+                x[0, t, word_indices[word]] = 1.
+            except:
+                pass
         preds = model.predict(x, verbose=0)[0]
         next_index = sample(preds, 10.)
         next_word = indices_word[next_index]
 
-        generated.append(next_word)
+        # generated.append(next_word)
         sentence.append(next_word)
         sentence = sentence[1:]
-        sys.stdout.write(next_word)
-        sys.stdout.write(' ')
-        sys.stdout.flush()
-    print()
+        # sys.stdout.write(next_word)
+        # sys.stdout.write(' ')
+        # sys.stdout.flush()
+        seed += ' '
+        seed += next_word
+    return seed
+
+def generate_responses(question):
+    with open('transcripts_df.pkl') as f:
+        df = pickle.load(f)
+    responses = {}
+    candidates = ['KENNEDY','REAGAN','B. CLINTON', 'OBAMA', 'H. R. CLINTON','TRUMP']
+    for c in candidates:
+        print(c)
+        responses[c] = generate_one_response(question, c, df)
+        print(responses[c])
+    return responses
+
 
 if __name__ == '__main__':
 
@@ -142,3 +162,4 @@ if __name__ == '__main__':
 
     # for c in candidates:
     #     train_neural_net(c, df)
+    #     generate_one_response("What is your plan for immigration?",c,df)
