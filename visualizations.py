@@ -25,7 +25,7 @@ def make_average_words_plot(df):
     plt.xlabel('Debate Year')
     plt.ylabel('Mean Number of Words Per Response Before Stopping or Interruption')
     plt.legend()
-    plt.savefig('images/average_words_per_response.png', dpi=None, facecolor='w', edgecolor='w', orientation='portrait', papertype=None, format=None,transparent=False, bbox_inches=None, pad_inches=0.3, frameon=None)
+    plt.savefig('plots/average_words_per_response.png', dpi=None, facecolor='w', edgecolor='w', orientation='portrait', papertype=None, format=None,transparent=False, bbox_inches=None, pad_inches=0.3, frameon=None)
     return None
 
 def make_vocabulary_size_plot(df):
@@ -54,7 +54,7 @@ def make_vocabulary_size_plot(df):
     plt.ylabel('Unique Words Per First 2500 Words')
     plt.ylim(600,1000)
     plt.legend()
-    plt.savefig('images/vocab_size_per_election.png', dpi=None, facecolor='w', edgecolor='w', orientation='portrait', papertype=None, format=None,transparent=False, bbox_inches=None, pad_inches=0.3, frameon=None)
+    plt.savefig('plots/vocab_size_per_election.png', dpi=None, facecolor='w', edgecolor='w', orientation='portrait', papertype=None, format=None,transparent=False, bbox_inches=None, pad_inches=0.3, frameon=None)
     return None
 
 if __name__ == '__main__':
