@@ -7,3 +7,4 @@ names_to_change.txt
 /keras_example.py
 /neural_networks
 /images/logos
+/images/.DS_Store
