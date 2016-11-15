@@ -1,7 +1,7 @@
 # Presidential Debate Simulator
 
-<p><strong>Galvanize, Inc.
-Data Science Immersive
+<p><strong>Galvanize, Inc.<br>
+Data Science Immersive<br>
 Capstone Project</strong></h4>
 
 Have you ever wondered what a presidential debate between JFK and Donald Trump would look like? Or how Bill and Hillary Clinton might bicker on stage?
