@@ -6,5 +6,6 @@ names_to_change.txt
 /nn_words.py
 /keras_example.py
 /neural_networks
-/images/logos
-/images/.DS_Store
+/images
+/.DS_store
+party_masked_cloud.py
