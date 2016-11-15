@@ -74,16 +74,17 @@
                     <img class="img-responsive" src="/static/img/usa_flag.png" alt="">
                     <div class="intro-text">
                         <span class="name"><font size="8">Presidential Debate Simulator</font></span>
-                        <hr class="star-light">
+
                         <span class="skills">Imagining a debate among past and current candidates</span>
+                        <hr class="star-light">
                         <h1></h1>
                         <form class = "skills" action = '/' method='POST'>
                           <input type='name' name='question' placeholder="  Your question here!" style="color: #000;" />
                           <br>
                           <br>
-                          <input type='submit' value='        Closest  Response     ' style="color: #18BC9C;" />
-                          <input type='submit' value="Most Realistic Response" style="color: #18BC9C;" />
-                          <input type='submit' value='Generate New Response' style="color: #18BC9C;" />
+                          <input type='submit' name = 'closest' value='        Closest  Response     ' style="color: #18BC9C;" />
+                          <input type='submit' name = 'best' value="Most Realistic Response" style="color: #18BC9C;" />
+                          <input type='submit' name = 'generative' value='Generate New Response' style="color: #18BC9C;" />
                           <br>
                           <br>
                           <p>Wondering what's the difference? Learn more <a href="#about"><font color="white"><u>here</u>.</font></a></font></p>
@@ -99,7 +100,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h2> {{ question }}</h2>
+                    <h2> {{ question }} </h2>
+                    <h4> ( {{ method }} ) </h4>
                     <hr class="star-primary">
                 </div>
             </div>
