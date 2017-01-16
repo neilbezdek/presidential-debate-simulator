@@ -18,15 +18,15 @@ To view the web app, clone this repo, run flask_bootstrap/app.py from the folder
 
 
 
-![figure2](plots/web-app_most-responsive.png)
+<kbd>![figure2](plots/web-app_most-responsive.png)<kbd>
 
 
 
-![figure3](plots/web-app_most-realistic.png)
+<kbd>![figure3](plots/web-app_most-realistic.png)<kbd>
 
 
 
-![figure4](plots/web-app_new-answer.png)
+<kbd>![figure4](plots/web-app_new-answer.png)<kbd>
 
 
 
