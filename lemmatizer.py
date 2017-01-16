@@ -4,6 +4,9 @@ import csv
 import string
 
 def build_stop_words():
+    '''
+    Combine SKLearn's stop words with a custom list.
+    '''
     with open('stop_words.csv', 'rb') as f:
         reader = csv.reader(f)
         my_stop_words = list(reader)[0]

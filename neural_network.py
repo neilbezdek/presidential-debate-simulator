@@ -1,4 +1,4 @@
-# Functions in this file train a text-generation neural network for each candidate or use the stored neural to generate a response based on a given seed. Running the if __name__ == '__main__' block trains and the neural net. Model is based on one of the examples provided by Keras.
+# Functions in this file train a text-generation neural network for each candidate or use the stored neural to generate a response based on a given seed. Running the if __name__ == '__main__' block trains and pickes each neural net. Script modeled after one of the examples provided by Keras.
 
 from __future__ import print_function
 from keras.models import Sequential
